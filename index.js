@@ -19,7 +19,7 @@ app.post("/login", (req,res) => {
     const { username, password } = req.body
     AdminModel.findOne({ username: username }).then(user => {
         if (user && user.password === password) {
-            const token = jwt.sign({ username }, SECRET, { expiresIn: "1h" })
+            const token = jwt.sign({ username }, SECRET, { expiresIn: "24h" })
             res.json({ message: "Success" , token,username})
         } else {
             res.json({ message: "username or password is incorrect" })
@@ -38,7 +38,7 @@ app.post("/signup", async (req, res) => {
     }
 
     const newUser = await AdminModel.create({ username, password });
-    const token = jwt.sign({ username }, SECRET, { expiresIn: "10s" }); // or "1h"
+    const token = jwt.sign({ username }, SECRET, { expiresIn: "24h" });
 
     return res.json({ message: "Success", token,username });
   } catch (err) {

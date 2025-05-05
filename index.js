@@ -116,6 +116,29 @@ app.delete("/tasks/:taskId", (req, res) => {
     .catch((err) => res.status(500).json({ error: err.message }));
 });
  
+// Save checked state and input values
+app.put("/tasks/save", async (req, res) => {
+  const { tasks } = req.body;
+
+  try {
+    const updates = tasks.map((task) =>
+      TaskModel.findByIdAndUpdate(
+        task._id,
+        {
+          checked: task.checked,
+          inputValue: task.details, // save inputValue from frontend
+        },
+        { new: true }
+      )
+    );
+
+    const updatedTasks = await Promise.all(updates);
+    res.json({ message: "Tasks updated", updatedTasks });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 app.listen(process.env.PORT, () => {
     console.log("server is running")

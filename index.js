@@ -126,7 +126,8 @@ app.put("/tasks/save", async (req, res) => {
         task._id,
         {
           checked: task.checked,
-          inputValue: task.details, // save inputValue from frontend
+          inputValue: task.details,
+          task: task.task, // save inputValue from frontend
         },
         { new: true }
       )
@@ -138,6 +139,30 @@ app.put("/tasks/save", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+app.put("/tasks/:id", async (req, res) => {
+  const { id } = req.params;
+  const { task, checked, inputValue } = req.body;
+
+  try {
+    const updatedTask = await TaskModel.findByIdAndUpdate(
+      id,
+      {
+        ...(task !== undefined && { task }),
+        ...(checked !== undefined && { checked }),
+        ...(inputValue !== undefined && { inputValue }),
+      },
+      { new: true }
+    );
+
+    if (!updatedTask)
+      return res.status(404).json({ message: "Task not found" });
+    res.json({ message: "Task updated", task: updatedTask });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 
 app.listen(process.env.PORT, () => {

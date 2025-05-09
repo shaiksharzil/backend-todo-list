@@ -183,6 +183,28 @@ app.put("/cards/:id", async (req, res) => {
 });
 
 
+app.delete("/tasks/byTitle/:titleId", async (req, res) => {
+  try {
+    const result = await TaskModel.deleteMany({ titleId: req.params.titleId });
+    res.json({ message: "Tasks deleted", result });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+app.delete("/cards/:id", async (req, res) => {
+  try {
+    const deletedCard = await CardModel.findByIdAndDelete(req.params.id);
+    if (!deletedCard)
+      return res.status(404).json({ message: "Card not found" });
+    res.json({ message: "Card deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 app.listen(process.env.PORT, () => {
     console.log("server is running")
 })

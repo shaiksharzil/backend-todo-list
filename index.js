@@ -163,6 +163,24 @@ app.put("/tasks/:id", async (req, res) => {
   }
 });
 
+app.put("/cards/:id", async (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+
+  try {
+    const updatedCard = await CardModel.findByIdAndUpdate(
+      id,
+      { title },
+      { new: true }
+    );
+    if (!updatedCard) {
+      return res.status(404).json({ message: "Card not found" });
+    }
+    res.json(updatedCard);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 
 app.listen(process.env.PORT, () => {

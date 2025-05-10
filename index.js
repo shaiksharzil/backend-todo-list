@@ -19,7 +19,7 @@ app.post("/login", (req,res) => {
     const { username, password } = req.body
     AdminModel.findOne({ username: username }).then(user => {
         if (user && user.password === password) {
-            const token = jwt.sign({ username }, SECRET, { expiresIn: "24h" })
+            const token = jwt.sign({ username }, SECRET, { expiresIn: "30d" })
             res.json({ message: "Success" , token,username})
         } else {
             res.json({ message: "username or password is incorrect" })
@@ -38,7 +38,7 @@ app.post("/signup", async (req, res) => {
     }
 
     const newUser = await AdminModel.create({ username, password });
-    const token = jwt.sign({ username }, SECRET, { expiresIn: "24h" });
+    const token = jwt.sign({ username }, SECRET, { expiresIn: "30d" });
 
     return res.json({ message: "Success", token,username });
   } catch (err) {
@@ -56,7 +56,7 @@ function verifyToken(req, res, next) {
   if (!token) return res.status(401).json("Access denied. No token provided.");
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) return res.status(401).json("Invalid token.");
+    if (err) return res.status(401).json({ message: "Invalid token" });
     req.user = decoded;
     next();
   });

@@ -7,7 +7,8 @@ const TaskSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  inputValue:String
+  inputValue: String,
+  time: String
 });
 
 module.exports = mongoose.model("Task", TaskSchema);

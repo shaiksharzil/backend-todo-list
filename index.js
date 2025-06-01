@@ -118,7 +118,7 @@ app.delete("/tasks/:taskId", (req, res) => {
  
 // Save checked state and input values
 app.put("/tasks/save", async (req, res) => {
-  const { tasks } = req.body;
+  const { tasks, time } = req.body;
 
   try {
     const updates = tasks.map((task) =>
@@ -127,7 +127,8 @@ app.put("/tasks/save", async (req, res) => {
         {
           checked: task.checked,
           inputValue: task.details,
-          task: task.task, // save inputValue from frontend
+          task: task.task,
+          ...(time && { time }),
         },
         { new: true }
       )

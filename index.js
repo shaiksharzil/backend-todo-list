@@ -118,7 +118,7 @@ app.delete("/tasks/:taskId", (req, res) => {
  
 // Save checked state and input values
 app.put("/tasks/save", async (req, res) => {
-  const { tasks} = req.body;
+  const { tasks, titleId } = req.body; // ✅ get titleId directly
 
   try {
     const updates = tasks.map((task) =>
@@ -127,26 +127,24 @@ app.put("/tasks/save", async (req, res) => {
         {
           checked: task.checked,
           inputValue: task.details,
-          task: task.task,
         },
         { new: true }
       )
     );
 
     const updatedTasks = await Promise.all(updates);
-    if (tasks.length > 0) {
+
+    if (titleId) {
       const now = new Date().toISOString();
-      await CardModel.findByIdAndUpdate(
-        tasks[0].titleId, // assuming each task has titleId
-        { time: now },
-        { new: true }
-      );
+      await CardModel.findByIdAndUpdate(titleId, { time: now });
     }
+
     res.json({ message: "Tasks updated", updatedTasks });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 app.put("/tasks/:id", async (req, res) => {
   const { id } = req.params;
@@ -211,7 +209,6 @@ app.delete("/cards/:id", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 app.listen(process.env.PORT, () => {
     console.log("server is running")

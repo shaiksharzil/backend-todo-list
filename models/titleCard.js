@@ -7,6 +7,7 @@ const CardSchema = new mongoose.Schema({
     required: true,
   },
   title: { type: String, required: true },
+  time: String,
 });
 
 module.exports = mongoose.model("Card", CardSchema);
